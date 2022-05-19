@@ -1,4 +1,5 @@
 from cmath import nan
+#import grp
 from tempfile import SpooledTemporaryFile
 import dash
 from dash import Dash, html, dcc, Output, Input, dash_table
@@ -9,6 +10,7 @@ import utilities as ut
 import numpy as np
 import os
 import re
+import matplotlib.pyplot as plt
 
 app = Dash(__name__)
 
@@ -116,6 +118,99 @@ def update_figure(value, algorithm_checkmarks):
     fig2 = px.line(ts, x="Time (s)", y = data_names[2])
     
     ### Aufgabe 2: Min / Max ###
+    #Link zu dieser Aufgabe: https://plotly.com/python/creating-and-updating-figures/
+
+    #Ermitteln der Extremwerte
+    grp=ts[['SpO2 (%)','Temp (C)','Blood Flow (ml/s)']].agg(['min','idxmin','max','idxmax'])
+
+    extrema=grp.loc[['min','max','idxmin','idxmax']]
+
+    #Einsetzen der Extremwerte in die Min und Max funktionen
+    if 'min' in algorithm_checkmarks:
+        fig0.add_trace(
+            go.Scatter(
+                mode='markers',
+                x=[extrema.loc['idxmin','SpO2 (%)']],
+                y=[extrema.loc['idxmin','SpO2 (%)']],
+                opacity=0.9,
+                marker=dict(
+                    color='Magenta',
+                    size=10
+                ),
+                 name='min'
+            )
+        )
+
+        fig1.add_trace(
+            go.Scatter(
+                mode='markers',
+                x=[extrema.loc['idxmin','Blood Flow (ml/s)']],
+                y=[extrema.loc['idxmin','Blood Flow (ml/s)']],
+                opacity=0.9,
+                marker=dict(
+                    color='Magenta',
+                    size=10
+                ),
+                 name='min'
+            )
+        )
+
+        fig2.add_trace(
+            go.Scatter(
+                mode='markers',
+                x=[extrema.loc['idxmin','Temp (C)']],
+                y=[extrema.loc['idxmin','Temp (C)']],
+                opacity=0.9,
+                marker=dict(
+                    color='Magenta',
+                    size=10
+                ),
+                 name='min'
+            )
+        )
+
+    if 'max' in algorithm_checkmarks:
+        fig0.add_trace(
+            go.Scatter(
+                mode='markers',
+                x=[extrema.loc['idxmax','SpO2 (%)']],
+                y=[extrema.loc['idxmax','SpO2 (%)']],
+                opacity=0.9,
+                marker=dict(
+                    color='Blue',
+                    size=10
+                ),
+                 name='max'
+            )
+        )
+
+        fig1.add_trace(
+            go.Scatter(
+                mode='markers',
+                x=[extrema.loc['idxmax','Blood Flow (ml/s)']],
+                y=[extrema.loc['idxmax','Blood Flow (ml/s)']],
+                opacity=0.9,
+                marker=dict(
+                    color='Blue',
+                    size=10
+                ),
+                 name='max'
+            )
+        )
+
+        fig2.add_trace(
+            go.Scatter(
+                mode='markers',
+                x=[extrema.loc['idxmax','Temp (C)']],
+                y=[extrema.loc['idxmax','Temp (C)']],
+                opacity=0.9,
+                marker=dict(
+                    color='Blue',
+                    size=10
+                ),
+                 name='max'
+            )
+        )
 
     return fig0, fig1, fig2 
 
@@ -134,6 +229,9 @@ def bloodflow_figure(value, bloodflow_checkmarks):
     bf = list_of_subjects[int(value)-1].subject_data
     fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s)")
 
+    #Simple Moving Average
+
+    #Calculating Moving Average
 
     return fig3
 

@@ -1,6 +1,7 @@
 # Import external packages
 
 from multiprocessing.connection import wait
+from pickletools import read_bytes1
 import pandas as pd
 from datetime import datetime
 import numpy as np
@@ -15,7 +16,7 @@ class Subject():
 
         __f = open(file_name)
         self.subject_data = pd.read_csv(__f)
-        self.subject_data = self.subject_data.interpolate(method='linear', axis=0)
+        self.subject_data = self.subject_data.interpolate(method='nearest', axis=0)
         __splited_id = re.findall(r'\d+',file_name)      
         self.subject_id = ''.join(__splited_id)
         self.names = self.subject_data.columns.values.tolist()
@@ -26,14 +27,21 @@ class Subject():
         print('Subject ' + self.subject_id + ' initialized')
 
 
-
         
 
 ### Aufgabe 2: Datenverarbeitung ###
 
+
 def calculate_CMA(df,n):
-    pass
+    temp = 0
+    for frame in range(n):
+        temp += frame
+    result = temp / n
+    return result
+
     
 
 def calculate_SMA(df,n):
     pass
+
+
