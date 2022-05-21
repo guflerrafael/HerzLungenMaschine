@@ -254,13 +254,6 @@ def bloodflow_figure(value, bloodflow_checkmarks):
     #Aufgabe 3 
     #Durchschnitt:
 
-    durchscnitt = bf.mean
-
-    x = [0, 480]
-    y = durchscnitt.loc['Blood Flow (ml/s)']
-
-    obergrenze=durchscnitt.loc['Blood Flow (ml/s)']*1.15
-    untergrenze=durchscnitt.loc['Blood Flow (ml/s)']*0.85
 
     return fig3
 
