@@ -220,7 +220,7 @@ def update_figure(value, algorithm_checkmarks):
     if algorithm_checkmarks is not None:
 
         # Wenn min ausgewählt wurde
-        if 'min' in algorithm_checkmarks:
+        if 'Min' in algorithm_checkmarks:
             plotLine(
                 fig0, 
                 [0, extremw.loc['idxmin',data_names[0]], 480], 
@@ -243,7 +243,7 @@ def update_figure(value, algorithm_checkmarks):
             )
 
         # Wenn max ausgewählt wurde
-        if 'max' in algorithm_checkmarks:
+        if 'Max' in algorithm_checkmarks:
             plotLine(
                 fig0, 
                 [0, extremw.loc['idxmax',data_names[0]], 480], 
@@ -313,7 +313,7 @@ def bloodflow_figure(value, bloodflow_checkmarks):
             # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - CMA")
         
         # Durchschnitt und Limits auf Plot anzeigen
-        if "Show Limits" in bloodflow_checkmarks:
+        if "Limits" in bloodflow_checkmarks:
             plotLine(fig3, [0, 480], [average, average], "red", "Avg (" + "{:.1f}".format(average) +")")
             plotLine(fig3, [0, 480], [upper_l, upper_l], "darkorange", "Upper (" + "{:.1f}".format(upper_l) +")")
             plotLine(fig3, [0, 480], [lower_l, lower_l], "darkorange", "Lower (" + "{:.1f}".format(lower_l) +")")
