@@ -1,5 +1,6 @@
 # Import external packages
 from multiprocessing.connection import wait
+from pickletools import read_bytes1
 import pandas as pd
 from datetime import datetime
 import numpy as np
@@ -34,10 +35,21 @@ class Subject():
         
 
 ### Aufgabe 2: Datenverarbeitung ###
+# Dataframe Funktionen zum Berechnen des SMA und CMA
 
 def calculate_CMA(df,n):
-    pass
-    
+    return df.expanding(n).mean()
 
 def calculate_SMA(df,n):
-    pass
+    return df.rolling(n).mean()
+
+#Aufgabe 4.1:
+
+# Der Simple Moving Averge wird zum Glätten von Daten verwendet, dabei wird immer der Durchschnitt über eine gewisse Periode(Zeit) berechnet.
+# Die alten Daten werden vernachlässigt um einen gewissen Trend erkennen zu können. Kurze Daten-Ausreißer werden sehr gut geglättet.
+# Diese Art von Moving Averge wird daher oft zum Traden an der Börse verwendet.
+# Ein Nachteil jedoch ist dass er etwas langsam auf Veränderungen der Daten reagiert,
+# er ist daher für die Datenverarbeitungen die in kurzen Zeiträumen stattfinden schlecht geeignet.
+
+#Aufgabe 4.2:
+#Desto größer n wird desto mehr werden die "Daten-Ausreißer" geglättet.

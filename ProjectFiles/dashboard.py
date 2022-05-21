@@ -10,6 +10,7 @@ import utilities as ut
 import numpy as np
 import os
 import re
+import matplotlib.pyplot as plt
 
 # Dash-App erstellen
 app = Dash(__name__)
@@ -163,10 +164,24 @@ app.layout = html.Div([
 
 ])
 
+#----Funktion um Linien zu plotten
+def plotLine(figure, x, y, color, name):
+    figure.add_trace(
+        go.Scatter(
+            mode="lines",
+            x=x,
+            y=y,
+            line=go.scatter.Line(color=color),
+            name=name
+        )
+    )
+
+#------
 
 #-----Callback Functions------------------
-
 # Callback handelt als Input die Checkliste für CMA SMA Limits und Output Graph 3
+## Graph Update Callback
+
 @app.callback(
     # In- or Output('which html element','which element property')
     Output('dash-graph0', 'figure'),
@@ -192,6 +207,63 @@ def update_figure(value, algorithm_checkmarks):
     fig2 = px.line(ts, x="Time (s)", y = data_names[2])
     
     ### Aufgabe 2: Min / Max ###
+    # Link zu dieser Aufgabe: https://plotly.com/python/creating-and-updating-figures/
+
+    # Ermitteln der Extremwerte
+    pat=ts[['SpO2 (%)','Temp (C)','Blood Flow (ml/s)']].agg(['min','idxmin','max','idxmax'])
+    extremw=pat.loc[['min','max','idxmin','idxmax']]
+
+    # Einsetzen der Extremwerte in die Plots. Es werden hierfür Linien verwendet, 
+    # da die Maximalwerte mehrmals vorkommen können.
+
+    # Wenn Checkmarker nicht None ist erst überprüfen, sonst kommt es zu Fehler
+    if algorithm_checkmarks is not None:
+
+        # Wenn min ausgewählt wurde
+        if 'min' in algorithm_checkmarks:
+            plotLine(
+                fig0, 
+                [0, extremw.loc['idxmin',data_names[0]], 480], 
+                [extremw.loc['min',data_names[0]], extremw.loc['min',data_names[0]], extremw.loc['min',data_names[0]]], 
+                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[0]]) +")"
+            )
+
+            plotLine(
+                fig1, 
+                [0, extremw.loc['idxmin',data_names[1]], 480], 
+                [extremw.loc['min',data_names[1]], extremw.loc['min',data_names[1]], extremw.loc['min',data_names[1]]], 
+                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[1]]) +")"
+            )
+
+            plotLine(
+                fig2, 
+                [0, extremw.loc['idxmin',data_names[2]], 480], 
+                [extremw.loc['min',data_names[2]], extremw.loc['min',data_names[2]], extremw.loc['min',data_names[2]]], 
+                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[2]]) +")"
+            )
+
+        # Wenn max ausgewählt wurde
+        if 'max' in algorithm_checkmarks:
+            plotLine(
+                fig0, 
+                [0, extremw.loc['idxmax',data_names[0]], 480], 
+                [extremw.loc['max',data_names[0]], extremw.loc['max',data_names[0]], extremw.loc['max',data_names[0]]], 
+                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[0]]) +")"
+            )
+
+            plotLine(
+                fig1, 
+                [0, extremw.loc['idxmax',data_names[1]], 480], 
+                [extremw.loc['max',data_names[1]], extremw.loc['max',data_names[1]], extremw.loc['max',data_names[1]]], 
+                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[1]]) +")"
+            )
+
+            plotLine(
+                fig2, 
+                [0, extremw.loc['idxmax',data_names[2]], 480], 
+                [extremw.loc['max',data_names[2]], extremw.loc['max',data_names[2]], extremw.loc['max',data_names[2]]], 
+                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[2]]) +")"
+            )
 
     return fig0, fig1, fig2 
 
@@ -212,6 +284,39 @@ def bloodflow_figure(value, bloodflow_checkmarks):
     bf = list_of_subjects[int(value)-1].subject_data
     fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s)")
 
+    # Berechnung des Mittelwerts und Limits: Aufgabe 3
+    average = bf[data_names[1]].mean()
+    upper_l = average * 1.15
+    lower_l = average * 0.85
+
+    # Ploten des SMA und CMA beim letzen Graphen:
+    if bloodflow_checkmarks is not None:
+
+        # Simple Moving Average:
+        if "SMA" in bloodflow_checkmarks:
+            bf["Blood Flow (ml/s) SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"], 5) 
+
+            # SMA wird auf eigenrlichen Plot überlagert
+            plotLine(fig3, bf["Time (s)"], bf["Blood Flow (ml/s) SMA"], "magenta", "SMA")
+
+            # Andere Möglichkeit: (plot wird erzetzt, aus Aufgabenstellung nicht klar)
+            # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - SMA")
+
+        # Calculating Moving Average:
+        if "CMA" in bloodflow_checkmarks:
+            bf["Blood Flow (ml/s) CMA"] = ut.calculate_CMA(bf["Blood Flow (ml/s)"], 2) 
+            
+            # CMA wird auf eigenrlichen Plot überlagert
+            plotLine(fig3, bf["Time (s)"], bf["Blood Flow (ml/s) CMA"], "green", "CMA")
+
+            # Andere Möglichkeit: (plot wird erzetzt, aus Aufgabenstellung nicht klar)
+            # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - CMA")
+        
+        # Durchschnitt und Limits auf Plot anzeigen
+        if "Show Limits" in bloodflow_checkmarks:
+            plotLine(fig3, [0, 480], [average, average], "red", "Avg (" + "{:.1f}".format(average) +")")
+            plotLine(fig3, [0, 480], [upper_l, upper_l], "darkorange", "Upper (" + "{:.1f}".format(upper_l) +")")
+            plotLine(fig3, [0, 480], [lower_l, lower_l], "darkorange", "Lower (" + "{:.1f}".format(lower_l) +")")
 
     return fig3
 
