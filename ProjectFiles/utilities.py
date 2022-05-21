@@ -33,7 +33,7 @@ class Subject():
 # Dataframe Funktionen zum Berechnen des SMA und CMA
 
 def calculate_CMA(df,n):
-    df.expanding(n).mean()
+    return df.expanding(n).mean()
 
 def calculate_SMA(df,n):
-    df.rolling(n).mean()
+    return df.rolling(n).mean()
