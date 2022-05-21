@@ -106,6 +106,7 @@ app.layout = html.Div(children=[
     Input('subject-dropdown', 'value'),
     Input('checklist-algo','value')
 )
+
 def update_figure(value, algorithm_checkmarks):
     print("Current Subject: ",value)
     print("current checked checkmarks are: ", algorithm_checkmarks)
@@ -118,99 +119,81 @@ def update_figure(value, algorithm_checkmarks):
     fig2 = px.line(ts, x="Time (s)", y = data_names[2])
     
     ### Aufgabe 2: Min / Max ###
-    #Link zu dieser Aufgabe: https://plotly.com/python/creating-and-updating-figures/
+    # Link zu dieser Aufgabe: https://plotly.com/python/creating-and-updating-figures/
 
-    #Ermitteln der Extremwerte
+    # Ermitteln der Extremwerte
     grp=ts[['SpO2 (%)','Temp (C)','Blood Flow (ml/s)']].agg(['min','idxmin','max','idxmax'])
-
     extrema=grp.loc[['min','max','idxmin','idxmax']]
 
-    #Einsetzen der Extremwerte in die Min und Max funktionen
-    if 'min' in algorithm_checkmarks:
-        fig0.add_trace(
-            go.Scatter(
-                mode='markers',
-                x=[extrema.loc['idxmin','SpO2 (%)']],
-                y=[extrema.loc['idxmin','SpO2 (%)']],
-                opacity=0.9,
-                marker=dict(
-                    color='Magenta',
-                    size=10
-                ),
-                 name='min'
-            )
-        )
+    # Einsetzen der Extremwerte in die Plots. Es werden hierfür Linien verwendet, 
+    # da die Maximalwerte mehrmals vorkommen können.
 
-        fig1.add_trace(
-            go.Scatter(
-                mode='markers',
-                x=[extrema.loc['idxmin','Blood Flow (ml/s)']],
-                y=[extrema.loc['idxmin','Blood Flow (ml/s)']],
-                opacity=0.9,
-                marker=dict(
-                    color='Magenta',
-                    size=10
-                ),
-                 name='min'
-            )
-        )
+    # Wenn Checkmarker nicht None ist erst überprüfen, sonst kommt es zu Fehler
+    if algorithm_checkmarks is not None:
 
-        fig2.add_trace(
-            go.Scatter(
-                mode='markers',
-                x=[extrema.loc['idxmin','Temp (C)']],
-                y=[extrema.loc['idxmin','Temp (C)']],
-                opacity=0.9,
-                marker=dict(
-                    color='Magenta',
-                    size=10
-                ),
-                 name='min'
+        # Wenn min ausgewählt wurde
+        if 'min' in algorithm_checkmarks:
+            fig0.add_trace(
+                go.Scatter(
+                    mode="lines",
+                    x=[0, extrema.loc['idxmin','SpO2 (%)'], 480],
+                    y=[extrema.loc['min','SpO2 (%)'], extrema.loc['min','SpO2 (%)'], extrema.loc['min','SpO2 (%)']],
+                    line=go.scatter.Line(color="magenta"),
+                    name='Min'
+                )
             )
-        )
 
-    if 'max' in algorithm_checkmarks:
-        fig0.add_trace(
-            go.Scatter(
-                mode='markers',
-                x=[extrema.loc['idxmax','SpO2 (%)']],
-                y=[extrema.loc['idxmax','SpO2 (%)']],
-                opacity=0.9,
-                marker=dict(
-                    color='Blue',
-                    size=10
-                ),
-                 name='max'
+            fig1.add_trace(
+                go.Scatter(
+                    mode="lines",
+                    x=[0, extrema.loc['idxmin','Blood Flow (ml/s)'], 480],
+                    y=[extrema.loc['min','Blood Flow (ml/s)'], extrema.loc['min','Blood Flow (ml/s)'], extrema.loc['min','Blood Flow (ml/s)']],
+                    line=go.scatter.Line(color="magenta"),
+                    name='Min'
+                )
             )
-        )
 
-        fig1.add_trace(
-            go.Scatter(
-                mode='markers',
-                x=[extrema.loc['idxmax','Blood Flow (ml/s)']],
-                y=[extrema.loc['idxmax','Blood Flow (ml/s)']],
-                opacity=0.9,
-                marker=dict(
-                    color='Blue',
-                    size=10
-                ),
-                 name='max'
+            fig2.add_trace(
+                go.Scatter(
+                    mode="lines",
+                    x=[0, extrema.loc['idxmin','Temp (C)'], 480],
+                    y=[extrema.loc['min','Temp (C)'], extrema.loc['min','Temp (C)'], extrema.loc['min','Temp (C)']],
+                    line=go.scatter.Line(color="magenta"),
+                    name='Min'
+                )
             )
-        )
 
-        fig2.add_trace(
-            go.Scatter(
-                mode='markers',
-                x=[extrema.loc['idxmax','Temp (C)']],
-                y=[extrema.loc['idxmax','Temp (C)']],
-                opacity=0.9,
-                marker=dict(
-                    color='Blue',
-                    size=10
-                ),
-                 name='max'
+        # Wenn max ausgewählt wurde
+        if 'max' in algorithm_checkmarks:
+            fig0.add_trace(
+                go.Scatter(
+                    mode="lines",
+                    x=[0, extrema.loc['idxmax','SpO2 (%)'], 480],
+                    y=[extrema.loc['max','SpO2 (%)'], extrema.loc['max','SpO2 (%)'], extrema.loc['max','SpO2 (%)']],
+                    line=go.scatter.Line(color="green"),
+                    name='Max'
+                )
             )
-        )
+
+            fig1.add_trace(
+                go.Scatter(
+                    mode="lines",
+                    x=[0, extrema.loc['idxmax','Blood Flow (ml/s)'], 480],
+                    y=[extrema.loc['max','Blood Flow (ml/s)'], extrema.loc['max','Blood Flow (ml/s)'], extrema.loc['max','Blood Flow (ml/s)']],
+                    line=go.scatter.Line(color="green"),
+                    name='Max'
+                )
+            )
+
+            fig2.add_trace(
+                go.Scatter(
+                    mode="lines",
+                    x=[0, extrema.loc['idxmax','Temp (C)'], 480],
+                    y=[extrema.loc['max','Temp (C)'], extrema.loc['max','Temp (C)'], extrema.loc['max','Temp (C)']],
+                    line=go.scatter.Line(color="green"),
+                    name='Max'
+                )
+            )
 
     return fig0, fig1, fig2 
 
