@@ -216,25 +216,40 @@ def bloodflow_figure(value, bloodflow_checkmarks):
     if bloodflow_checkmarks is not None:
 
         # Simple Moving Average
-        if "SMA" in bloodflow_checkmarks and "CMA" not in bloodflow_checkmarks:
-            bf["Blood Flow (ml/s) - SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"], 5) 
+        if "SMA" in bloodflow_checkmarks:
+            bf["Blood Flow (ml/s) SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"], 5) 
+
+            # SMA wird auf eigenrlichen Plot überlagert
             fig3.add_trace(
                 go.Scatter(
                     mode="lines",
                     x=bf["Time (s)"],
-                    y=bf["Blood Flow (ml/s) - SMA"],
+                    y=bf["Blood Flow (ml/s) SMA"],
                     line_color="magenta",
                     name='SMA'
                 )
             )
 
-            print(bf["Time (s)"])
-            print(bf["Blood Flow (ml/s) - SMA"])
+            # Andere Möglichkeit: (plot wird erzetzt, aus Aufgabenstellung nicht klar)
+            # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - SMA")
 
         # Calculating Moving Average
-        if "CMA" in bloodflow_checkmarks and "SMA" not in bloodflow_checkmarks:
+        if "CMA" in bloodflow_checkmarks:
             bf["Blood Flow (ml/s) CMA"] = ut.calculate_CMA(bf["Blood Flow (ml/s)"], 2) 
-            fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) CMA")
+            
+            # CMA wird auf eigenrlichen Plot überlagert
+            fig3.add_trace(
+                go.Scatter(
+                    mode="lines",
+                    x=bf["Time (s)"],
+                    y=bf["Blood Flow (ml/s) CMA"],
+                    line_color="green",
+                    name='SMA'
+                )
+            )
+
+            # Andere Möglichkeit: (plot wird erzetzt, aus Aufgabenstellung nicht klar)
+            # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - CMA")
 
     return fig3
 
