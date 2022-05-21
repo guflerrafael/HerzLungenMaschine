@@ -244,7 +244,7 @@ def bloodflow_figure(value, bloodflow_checkmarks):
                     x=bf["Time (s)"],
                     y=bf["Blood Flow (ml/s) CMA"],
                     line_color="green",
-                    name='SMA'
+                    name='CMA'
                 )
             )
 
