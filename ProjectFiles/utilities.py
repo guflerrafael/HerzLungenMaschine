@@ -30,18 +30,10 @@ class Subject():
         
 
 ### Aufgabe 2: Datenverarbeitung ###
-
+# Dataframe Funktionen zum Berechnen des SMA und CMA
 
 def calculate_CMA(df,n):
-    temp = 0
-    for frame in range(n):
-        temp += frame
-    result = temp / n
-    return result
-
-    
+    df.expanding(n).mean()
 
 def calculate_SMA(df,n):
-    pass
-
-
+    df.rolling(n).mean()

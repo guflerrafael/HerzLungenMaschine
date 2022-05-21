@@ -212,9 +212,18 @@ def bloodflow_figure(value, bloodflow_checkmarks):
     bf = list_of_subjects[int(value)-1].subject_data
     fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s)")
 
-    #Simple Moving Average
+    # Ploten des SMA und CMA beim letzen Graphen
+    if bloodflow_checkmarks is not None:
 
-    #Calculating Moving Average
+        # Simple Moving Average
+        if "SMA" in bloodflow_checkmarks:
+            bf["Blood Flow (ml/s) - SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"],5) 
+            fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - SMA")
+
+        # Calculating Moving Average
+        if "SMA" in bloodflow_checkmarks:
+            bf["Blood Flow (ml/s) - CMA"] = ut.calculate_CMA(bf["Blood Flow (ml/s)"],2) 
+            fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - CMA")
 
     return fig3
 
