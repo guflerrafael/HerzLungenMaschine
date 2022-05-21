@@ -225,21 +225,21 @@ def update_figure(value, algorithm_checkmarks):
                 fig0, 
                 [0, extremw.loc['idxmin',data_names[0]], 480], 
                 [extremw.loc['min',data_names[0]], extremw.loc['min',data_names[0]], extremw.loc['min',data_names[0]]], 
-                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[0]]) +")"
+                "magenta", "Min: " + "{:.1f}".format(extremw.loc["min",data_names[0]])
             )
 
             plotLine(
                 fig1, 
                 [0, extremw.loc['idxmin',data_names[1]], 480], 
                 [extremw.loc['min',data_names[1]], extremw.loc['min',data_names[1]], extremw.loc['min',data_names[1]]], 
-                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[1]]) +")"
+                "magenta", "Min: " + "{:.1f}".format(extremw.loc["min",data_names[1]])
             )
 
             plotLine(
                 fig2, 
                 [0, extremw.loc['idxmin',data_names[2]], 480], 
                 [extremw.loc['min',data_names[2]], extremw.loc['min',data_names[2]], extremw.loc['min',data_names[2]]], 
-                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[2]]) +")"
+                "magenta", "Min: " + "{:.1f}".format(extremw.loc["min",data_names[2]])
             )
 
         # Wenn max ausgewählt wurde
@@ -248,21 +248,21 @@ def update_figure(value, algorithm_checkmarks):
                 fig0, 
                 [0, extremw.loc['idxmax',data_names[0]], 480], 
                 [extremw.loc['max',data_names[0]], extremw.loc['max',data_names[0]], extremw.loc['max',data_names[0]]], 
-                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[0]]) +")"
+                "green", "Max: " + "{:.1f}".format(extremw.loc["max",data_names[0]])
             )
 
             plotLine(
                 fig1, 
                 [0, extremw.loc['idxmax',data_names[1]], 480], 
                 [extremw.loc['max',data_names[1]], extremw.loc['max',data_names[1]], extremw.loc['max',data_names[1]]], 
-                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[1]]) +")"
+                "green", "Max: " + "{:.1f}".format(extremw.loc["max",data_names[1]])
             )
 
             plotLine(
                 fig2, 
                 [0, extremw.loc['idxmax',data_names[2]], 480], 
                 [extremw.loc['max',data_names[2]], extremw.loc['max',data_names[2]], extremw.loc['max',data_names[2]]], 
-                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[2]]) +")"
+                "green", "Max: " + "{:.1f}".format(extremw.loc["max",data_names[2]])
             )
 
     return fig0, fig1, fig2 
@@ -314,9 +314,9 @@ def bloodflow_figure(value, bloodflow_checkmarks):
         
         # Durchschnitt und Limits auf Plot anzeigen
         if "Limits" in bloodflow_checkmarks:
-            plotLine(fig3, [0, 480], [average, average], "red", "Avg (" + "{:.1f}".format(average) +")")
-            plotLine(fig3, [0, 480], [upper_l, upper_l], "darkorange", "Upper (" + "{:.1f}".format(upper_l) +")")
-            plotLine(fig3, [0, 480], [lower_l, lower_l], "darkorange", "Lower (" + "{:.1f}".format(lower_l) +")")
+            plotLine(fig3, [0, 480], [average, average], "red", "Avg: " + "{:.1f}".format(average))
+            plotLine(fig3, [0, 480], [upper_l, upper_l], "darkorange", "Up:" + "{:.1f}".format(upper_l))
+            plotLine(fig3, [0, 480], [lower_l, lower_l], "darkorange", "Low:" + "{:.1f}".format(lower_l))
 
     return fig3
 
