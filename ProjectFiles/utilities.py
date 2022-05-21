@@ -37,3 +37,14 @@ def calculate_CMA(df,n):
 
 def calculate_SMA(df,n):
     return df.rolling(n).mean()
+
+#Aufgabe 4.1:
+
+# Der Simple Moving Averge wird zum Glätten von Daten verwendet, dabei wird immer der Durchschnitt über eine gewisse Periode(Zeit) berechnet.
+# Die alten Daten werden vernachlässigt um einen gewissen Trend erkennen zu können. Kurze Daten-Ausreißer werden sehr gut geglättet.
+# Diese Art von Moving Averge wird daher oft zum Traden an der Börse verwendet.
+# Ein Nachteil jedoch ist dass er etwas langsam auf Veränderungen der Daten reagiert,
+# er ist daher für die Datenverarbeitungen die in kurzen Zeiträumen stattfinden schlecht geeignet.
+
+#Aufgabe 4.2:
+#Desto größer n wird desto mehr werden die "Daten-Ausreißer" geglättet.
