@@ -95,6 +95,21 @@ app.layout = html.Div(children=[
         figure=fig3
     )
 ])
+
+#----Funktion um Linien zu plotten
+def plotLine(figure, x, y, color, name):
+    figure.add_trace(
+        go.Scatter(
+            mode="lines",
+            x=x,
+            y=y,
+            line=go.scatter.Line(color=color),
+            name=name
+        )
+    )
+
+#------
+
 ### Callback Functions ###
 ## Graph Update Callback
 @app.callback(
@@ -132,66 +147,48 @@ def update_figure(value, algorithm_checkmarks):
 
         # Wenn min ausgewählt wurde
         if 'min' in algorithm_checkmarks:
-            fig0.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=[0, extremw.loc['idxmin','SpO2 (%)'], 480],
-                    y=[extremw.loc['min','SpO2 (%)'], extremw.loc['min','SpO2 (%)'], extremw.loc['min','SpO2 (%)']],
-                    line=go.scatter.Line(color="magenta"),
-                    name='Min'
-                )
+            plotLine(
+                fig0, 
+                [0, extremw.loc['idxmin',data_names[0]], 480], 
+                [extremw.loc['min',data_names[0]], extremw.loc['min',data_names[0]], extremw.loc['min',data_names[0]]], 
+                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[0]]) +")"
             )
 
-            fig1.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=[0, extremw.loc['idxmin','Blood Flow (ml/s)'], 480],
-                    y=[extremw.loc['min','Blood Flow (ml/s)'], extremw.loc['min','Blood Flow (ml/s)'], extremw.loc['min','Blood Flow (ml/s)']],
-                    line=go.scatter.Line(color="magenta"),
-                    name='Min'
-                )
+            plotLine(
+                fig1, 
+                [0, extremw.loc['idxmin',data_names[1]], 480], 
+                [extremw.loc['min',data_names[1]], extremw.loc['min',data_names[1]], extremw.loc['min',data_names[1]]], 
+                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[1]]) +")"
             )
 
-            fig2.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=[0, extremw.loc['idxmin','Temp (C)'], 480],
-                    y=[extremw.loc['min','Temp (C)'], extremw.loc['min','Temp (C)'], extremw.loc['min','Temp (C)']],
-                    line=go.scatter.Line(color="magenta"),
-                    name='Min'
-                )
+            plotLine(
+                fig2, 
+                [0, extremw.loc['idxmin',data_names[2]], 480], 
+                [extremw.loc['min',data_names[2]], extremw.loc['min',data_names[2]], extremw.loc['min',data_names[2]]], 
+                "magenta", "Min (" + "{:.1f}".format(extremw.loc["min",data_names[2]]) +")"
             )
 
         # Wenn max ausgewählt wurde
         if 'max' in algorithm_checkmarks:
-            fig0.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=[0, extremw.loc['idxmax','SpO2 (%)'], 480],
-                    y=[extremw.loc['max','SpO2 (%)'], extremw.loc['max','SpO2 (%)'], extremw.loc['max','SpO2 (%)']],
-                    line=go.scatter.Line(color="green"),
-                    name='Max'
-                )
+            plotLine(
+                fig0, 
+                [0, extremw.loc['idxmax',data_names[0]], 480], 
+                [extremw.loc['max',data_names[0]], extremw.loc['max',data_names[0]], extremw.loc['max',data_names[0]]], 
+                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[0]]) +")"
             )
 
-            fig1.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=[0, extremw.loc['idxmax','Blood Flow (ml/s)'], 480],
-                    y=[extremw.loc['max','Blood Flow (ml/s)'], extremw.loc['max','Blood Flow (ml/s)'], extremw.loc['max','Blood Flow (ml/s)']],
-                    line=go.scatter.Line(color="green"),
-                    name='Max'
-                )
+            plotLine(
+                fig1, 
+                [0, extremw.loc['idxmax',data_names[1]], 480], 
+                [extremw.loc['max',data_names[1]], extremw.loc['max',data_names[1]], extremw.loc['max',data_names[1]]], 
+                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[1]]) +")"
             )
 
-            fig2.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=[0, extremw.loc['idxmax','Temp (C)'], 480],
-                    y=[extremw.loc['max','Temp (C)'], extremw.loc['max','Temp (C)'], extremw.loc['max','Temp (C)']],
-                    line=go.scatter.Line(color="green"),
-                    name='Max'
-                )
+            plotLine(
+                fig2, 
+                [0, extremw.loc['idxmax',data_names[2]], 480], 
+                [extremw.loc['max',data_names[2]], extremw.loc['max',data_names[2]], extremw.loc['max',data_names[2]]], 
+                "green", "Max (" + "{:.1f}".format(extremw.loc["max",data_names[2]]) +")"
             )
 
     return fig0, fig1, fig2 
@@ -204,12 +201,18 @@ def update_figure(value, algorithm_checkmarks):
     Input('subject-dropdown', 'value'),
     Input('checklist-bloodflow','value')
 )
+
 def bloodflow_figure(value, bloodflow_checkmarks):
     
     ## Calculate Moving Average: Aufgabe 2
     print(bloodflow_checkmarks)
     bf = list_of_subjects[int(value)-1].subject_data
     fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s)")
+
+    # Berechnung des Mittelwerts und Limits: Aufgabe 3
+    average = bf[data_names[1]].mean()
+    upper_l = average * 1.15
+    lower_l = average * 0.85
 
     # Ploten des SMA und CMA beim letzen Graphen:
     if bloodflow_checkmarks is not None:
@@ -219,15 +222,7 @@ def bloodflow_figure(value, bloodflow_checkmarks):
             bf["Blood Flow (ml/s) SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"], 5) 
 
             # SMA wird auf eigenrlichen Plot überlagert
-            fig3.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=bf["Time (s)"],
-                    y=bf["Blood Flow (ml/s) SMA"],
-                    line_color="magenta",
-                    name='SMA'
-                )
-            )
+            plotLine(fig3, bf["Time (s)"], bf["Blood Flow (ml/s) SMA"], "magenta", "SMA")
 
             # Andere Möglichkeit: (plot wird erzetzt, aus Aufgabenstellung nicht klar)
             # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - SMA")
@@ -237,30 +232,16 @@ def bloodflow_figure(value, bloodflow_checkmarks):
             bf["Blood Flow (ml/s) CMA"] = ut.calculate_CMA(bf["Blood Flow (ml/s)"], 2) 
             
             # CMA wird auf eigenrlichen Plot überlagert
-            fig3.add_trace(
-                go.Scatter(
-                    mode="lines",
-                    x=bf["Time (s)"],
-                    y=bf["Blood Flow (ml/s) CMA"],
-                    line_color="green",
-                    name='CMA'
-                )
-            )
+            plotLine(fig3, bf["Time (s)"], bf["Blood Flow (ml/s) CMA"], "green", "CMA")
 
             # Andere Möglichkeit: (plot wird erzetzt, aus Aufgabenstellung nicht klar)
             # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - CMA")
-
-
-    #Aufgabe 3 
-    #Durchschnitt:
-
-    durchscnitt = bf.mean
-
-    x = [0, 480]
-    y = durchscnitt.loc['Blood Flow (ml/s)']
-
-    obergrenze=durchscnitt.loc['Blood Flow (ml/s)']*1.15
-    untergrenze=durchscnitt.loc['Blood Flow (ml/s)']*0.85
+        
+        # Durchschnitt und Limits auf Plot anzeigen
+        if "Show Limits" in bloodflow_checkmarks:
+            plotLine(fig3, [0, 480], [average, average], "red", "Avg (" + "{:.1f}".format(average) +")")
+            plotLine(fig3, [0, 480], [upper_l, upper_l], "darkorange", "Upper (" + "{:.1f}".format(upper_l) +")")
+            plotLine(fig3, [0, 480], [lower_l, lower_l], "darkorange", "Lower (" + "{:.1f}".format(lower_l) +")")
 
     return fig3
 
