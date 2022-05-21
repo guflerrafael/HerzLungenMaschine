@@ -1,7 +1,5 @@
 from cmath import nan
-#import grp
 from tempfile import SpooledTemporaryFile
-#from tty import IFLAG
 import dash
 from dash import Dash, html, dcc, Output, Input, dash_table
 import plotly.express as px
@@ -123,8 +121,8 @@ def update_figure(value, algorithm_checkmarks):
     # Link zu dieser Aufgabe: https://plotly.com/python/creating-and-updating-figures/
 
     # Ermitteln der Extremwerte
-    grp=ts[['SpO2 (%)','Temp (C)','Blood Flow (ml/s)']].agg(['min','idxmin','max','idxmax'])
-    extrema=grp.loc[['min','max','idxmin','idxmax']]
+    pat=ts[['SpO2 (%)','Temp (C)','Blood Flow (ml/s)']].agg(['min','idxmin','max','idxmax'])
+    extremw=pat.loc[['min','max','idxmin','idxmax']]
 
     # Einsetzen der Extremwerte in die Plots. Es werden hierfür Linien verwendet, 
     # da die Maximalwerte mehrmals vorkommen können.
@@ -137,8 +135,8 @@ def update_figure(value, algorithm_checkmarks):
             fig0.add_trace(
                 go.Scatter(
                     mode="lines",
-                    x=[0, extrema.loc['idxmin','SpO2 (%)'], 480],
-                    y=[extrema.loc['min','SpO2 (%)'], extrema.loc['min','SpO2 (%)'], extrema.loc['min','SpO2 (%)']],
+                    x=[0, extremw.loc['idxmin','SpO2 (%)'], 480],
+                    y=[extremw.loc['min','SpO2 (%)'], extremw.loc['min','SpO2 (%)'], extremw.loc['min','SpO2 (%)']],
                     line=go.scatter.Line(color="magenta"),
                     name='Min'
                 )
@@ -147,8 +145,8 @@ def update_figure(value, algorithm_checkmarks):
             fig1.add_trace(
                 go.Scatter(
                     mode="lines",
-                    x=[0, extrema.loc['idxmin','Blood Flow (ml/s)'], 480],
-                    y=[extrema.loc['min','Blood Flow (ml/s)'], extrema.loc['min','Blood Flow (ml/s)'], extrema.loc['min','Blood Flow (ml/s)']],
+                    x=[0, extremw.loc['idxmin','Blood Flow (ml/s)'], 480],
+                    y=[extremw.loc['min','Blood Flow (ml/s)'], extremw.loc['min','Blood Flow (ml/s)'], extremw.loc['min','Blood Flow (ml/s)']],
                     line=go.scatter.Line(color="magenta"),
                     name='Min'
                 )
@@ -157,8 +155,8 @@ def update_figure(value, algorithm_checkmarks):
             fig2.add_trace(
                 go.Scatter(
                     mode="lines",
-                    x=[0, extrema.loc['idxmin','Temp (C)'], 480],
-                    y=[extrema.loc['min','Temp (C)'], extrema.loc['min','Temp (C)'], extrema.loc['min','Temp (C)']],
+                    x=[0, extremw.loc['idxmin','Temp (C)'], 480],
+                    y=[extremw.loc['min','Temp (C)'], extremw.loc['min','Temp (C)'], extremw.loc['min','Temp (C)']],
                     line=go.scatter.Line(color="magenta"),
                     name='Min'
                 )
@@ -169,8 +167,8 @@ def update_figure(value, algorithm_checkmarks):
             fig0.add_trace(
                 go.Scatter(
                     mode="lines",
-                    x=[0, extrema.loc['idxmax','SpO2 (%)'], 480],
-                    y=[extrema.loc['max','SpO2 (%)'], extrema.loc['max','SpO2 (%)'], extrema.loc['max','SpO2 (%)']],
+                    x=[0, extremw.loc['idxmax','SpO2 (%)'], 480],
+                    y=[extremw.loc['max','SpO2 (%)'], extremw.loc['max','SpO2 (%)'], extremw.loc['max','SpO2 (%)']],
                     line=go.scatter.Line(color="green"),
                     name='Max'
                 )
@@ -179,8 +177,8 @@ def update_figure(value, algorithm_checkmarks):
             fig1.add_trace(
                 go.Scatter(
                     mode="lines",
-                    x=[0, extrema.loc['idxmax','Blood Flow (ml/s)'], 480],
-                    y=[extrema.loc['max','Blood Flow (ml/s)'], extrema.loc['max','Blood Flow (ml/s)'], extrema.loc['max','Blood Flow (ml/s)']],
+                    x=[0, extremw.loc['idxmax','Blood Flow (ml/s)'], 480],
+                    y=[extremw.loc['max','Blood Flow (ml/s)'], extremw.loc['max','Blood Flow (ml/s)'], extremw.loc['max','Blood Flow (ml/s)']],
                     line=go.scatter.Line(color="green"),
                     name='Max'
                 )
@@ -189,8 +187,8 @@ def update_figure(value, algorithm_checkmarks):
             fig2.add_trace(
                 go.Scatter(
                     mode="lines",
-                    x=[0, extrema.loc['idxmax','Temp (C)'], 480],
-                    y=[extrema.loc['max','Temp (C)'], extrema.loc['max','Temp (C)'], extrema.loc['max','Temp (C)']],
+                    x=[0, extremw.loc['idxmax','Temp (C)'], 480],
+                    y=[extremw.loc['max','Temp (C)'], extremw.loc['max','Temp (C)'], extremw.loc['max','Temp (C)']],
                     line=go.scatter.Line(color="green"),
                     name='Max'
                 )
@@ -251,6 +249,18 @@ def bloodflow_figure(value, bloodflow_checkmarks):
 
             # Andere Möglichkeit: (plot wird erzetzt, aus Aufgabenstellung nicht klar)
             # fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s) - CMA")
+
+
+    #Aufgabe 3 
+    #Durchschnitt:
+
+    durchscnitt = bf.mean
+
+    x = [0, 480]
+    y = durchscnitt.loc['Blood Flow (ml/s)']
+
+    obergrenze=durchscnitt.loc['Blood Flow (ml/s)']*1.15
+    untergrenze=durchscnitt.loc['Blood Flow (ml/s)']*0.85
 
     return fig3
 
