@@ -348,6 +348,8 @@ def bloodflow_figure(value, bloodflow_checkmarks):
 
         # Calculating Moving Average:
         if "CMA" in bloodflow_checkmarks:
+            show_dialog = False
+
             bf["Blood Flow (ml/s) CMA"] = ut.calculate_CMA(bf["Blood Flow (ml/s)"], 2) 
             
             # CMA wird auf eigenrlichen Plot überlagert
@@ -358,6 +360,8 @@ def bloodflow_figure(value, bloodflow_checkmarks):
         
         # Durchschnitt und Limits auf Plot anzeigen
         if "Limits" in bloodflow_checkmarks:
+            show_dialog = False
+
             plotLine(fig3, [0, 480], [average, average], "red", "Avg: " + "{:.1f}".format(average))
             plotLine(fig3, [0, 480], [upper_l, upper_l], "darkorange", "Up:" + "{:.1f}".format(upper_l))
             plotLine(fig3, [0, 480], [lower_l, lower_l], "darkorange", "Low:" + "{:.1f}".format(lower_l))
