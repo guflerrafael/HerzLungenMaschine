@@ -370,3 +370,7 @@ def bloodflow_figure(value, bloodflow_checkmarks):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+#Aufgabe 3.4
+#Nachdem der SMA berechnet wurde, wird er der Funktion bloodflow_alarm zusammen mit den beiden Limits übergeben welche dann überprüfen, ob sie für 3 Sekunden über- oder unterschritten werden.
+#Das window (n) wurde auf 5 gesetzt da es somit bei der Überprüfung zu keinen Verfälschungen kommt.
