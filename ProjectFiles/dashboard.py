@@ -300,7 +300,7 @@ def bloodflow_alarm(sma, upper_l, lower_l):
                 count = 0
 
             if count == 3: 
-                return True, "Alarm! Sekunden über/unter Grenzwerten: " + str(n_over_limits) + "!"
+                return True, "Alarm! Sekunden über/unter Grenzwerten: " + str(n_over_limits)
 
 #-----------
 
