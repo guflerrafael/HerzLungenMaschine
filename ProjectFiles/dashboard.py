@@ -6,6 +6,7 @@ from dash import Dash, html, dcc, Output, Input, dash_table
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+from sqlalchemy import over, true
 import utilities as ut
 import numpy as np
 import os
@@ -268,6 +269,37 @@ def update_figure(value, algorithm_checkmarks):
     return fig0, fig1, fig2 
 
 
+#------- Funktion, welche überprüft ob SMA über oder unter Limits ist und mit Sekungen ausgibt -------
+def bloodflow_alarm(sma, upper_l, lower_l):
+    count=0
+
+    # Jeden Wert mit upper_l und lower_l überprüfen und Array mit true/false als Rückgabe
+    over_upper_l = sma > upper_l
+    over_lower_l = sma < lower_l
+
+    # Arrays mit OR Logik verknüpfen
+    over_limits = np.logical_or(over_lower_l, over_upper_l)
+    print(over_limits)
+
+    # Anzahl der true Werte
+    n_over_limits = np.sum(over_limits)
+
+    # Wenn true mindestens 3 mal vorkommt, sonst macht überprüfung keinen Sinn (Verschwendete Rechenzeit)
+    if n_over_limits >= 3:
+
+        # Schleife welche Liste durchgeht und wenn 3 mal nacheinander, Schleife beendet
+        for x in over_limits:
+            if x == True: 
+                count += 1
+            else: 
+                count = 0
+
+            if count == 3: 
+                print("ALARM!!!! Sekunden über/unter Grenzwerten: " + str(n_over_limits))
+                break
+
+#-----------
+
 # Callback handelt als Input die Checkliste für CMA SMA Limits und Output Graph 3
 @app.callback(
     # In- or Output('which html element','which element property')
@@ -294,7 +326,10 @@ def bloodflow_figure(value, bloodflow_checkmarks):
 
         # Simple Moving Average:
         if "SMA" in bloodflow_checkmarks:
-            bf["Blood Flow (ml/s) SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"], 5) 
+            bf["Blood Flow (ml/s) SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"], 5)
+
+            # Check Alarm
+            bloodflow_alarm(np.array(bf["Blood Flow (ml/s) SMA"]), upper_l, lower_l)
 
             # SMA wird auf eigenrlichen Plot überlagert
             plotLine(fig3, bf["Time (s)"], bf["Blood Flow (ml/s) SMA"], "magenta", "SMA")
