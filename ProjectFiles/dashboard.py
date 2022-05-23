@@ -63,6 +63,12 @@ fig3 = px.line(df, x="Time (s)", y = data_names[1])
 # App Layout: HTML und CSS wird hier erstellt und dann in wirkliche HTML Datei mit CSS umgewandelt
 # CSS Styling teilweise in style.css ausgelagert
 app.layout = html.Div([
+
+    # Dialog Fenster als Alarm bei Überschreitung der Grenzwerte
+    dcc.ConfirmDialog(
+        id = "confirm-alarm",
+        message = ""
+    ),
     
     # Überschrift mit Umrandung
     html.Div(children=[
@@ -269,7 +275,7 @@ def update_figure(value, algorithm_checkmarks):
     return fig0, fig1, fig2 
 
 
-#------- Funktion, welche überprüft ob SMA über oder unter Limits ist und mit Sekungen ausgibt -------
+#------- Funktion, welche überprüft ob SMA über oder unter Limits ist und Anzeigen und Sekungen zurückgibt -------
 def bloodflow_alarm(sma, upper_l, lower_l):
     count=0
 
@@ -279,9 +285,8 @@ def bloodflow_alarm(sma, upper_l, lower_l):
 
     # Arrays mit OR Logik verknüpfen
     over_limits = np.logical_or(over_lower_l, over_upper_l)
-    print(over_limits)
 
-    # Anzahl der true Werte
+    # Anzahl der true Werte (auch Sekunden über/unter Limit)
     n_over_limits = np.sum(over_limits)
 
     # Wenn true mindestens 3 mal vorkommt, sonst macht überprüfung keinen Sinn (Verschwendete Rechenzeit)
@@ -295,8 +300,7 @@ def bloodflow_alarm(sma, upper_l, lower_l):
                 count = 0
 
             if count == 3: 
-                print("ALARM!!!! Sekunden über/unter Grenzwerten: " + str(n_over_limits))
-                break
+                return True, "Alarm! Sekunden über/unter Grenzwerten: " + str(n_over_limits) + "!"
 
 #-----------
 
@@ -304,13 +308,18 @@ def bloodflow_alarm(sma, upper_l, lower_l):
 @app.callback(
     # In- or Output('which html element','which element property')
     Output('dash-graph3', 'figure'),
+    Output("confirm-alarm", "displayed"),
+    Output("confirm-alarm", "message"),
     Input('subject-dropdown', 'value'),
     Input('checklist-bloodflow','value')
 )
 
 # Hier wird nur der letze Graph mit Bloodflow verändert
 def bloodflow_figure(value, bloodflow_checkmarks):
-    
+
+    show_dialog = False # Anzeige DialogFenster
+    message_dialog = "" # Message im DialogFenster
+
     ## Calculate Moving Average: Aufgabe 2
     print(bloodflow_checkmarks)
     bf = list_of_subjects[int(value)-1].subject_data
@@ -328,8 +337,8 @@ def bloodflow_figure(value, bloodflow_checkmarks):
         if "SMA" in bloodflow_checkmarks:
             bf["Blood Flow (ml/s) SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"], 5)
 
-            # Check Alarm
-            bloodflow_alarm(np.array(bf["Blood Flow (ml/s) SMA"]), upper_l, lower_l)
+            # Check Alarm (show_dialog True oder False, message_dialog was angezeigt wird)
+            show_dialog, message_dialog = bloodflow_alarm(np.array(bf["Blood Flow (ml/s) SMA"]), upper_l, lower_l)
 
             # SMA wird auf eigenrlichen Plot überlagert
             plotLine(fig3, bf["Time (s)"], bf["Blood Flow (ml/s) SMA"], "magenta", "SMA")
@@ -353,7 +362,7 @@ def bloodflow_figure(value, bloodflow_checkmarks):
             plotLine(fig3, [0, 480], [upper_l, upper_l], "darkorange", "Up:" + "{:.1f}".format(upper_l))
             plotLine(fig3, [0, 480], [lower_l, lower_l], "darkorange", "Low:" + "{:.1f}".format(lower_l))
 
-    return fig3
+    return fig3, show_dialog, message_dialog
 
 if __name__ == '__main__':
     app.run_server(debug=True)
